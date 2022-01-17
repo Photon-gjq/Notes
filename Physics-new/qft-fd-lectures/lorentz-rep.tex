@@ -1,0 +1,294 @@
+\documentclass[hyperref, a4paper]{article}
+
+\usepackage{geometry}
+\usepackage{marginnote}
+\usepackage{titling}
+\usepackage{titlesec}
+% No longer needed, since we will use enumitem package
+% \usepackage{paralist}
+\usepackage{enumitem}
+\usepackage{footnote}
+% Conflicts with enumitem
+%\usepackage{enumerate}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{mathtools}
+\usepackage{bbm}
+\usepackage{cite}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{physics}
+\usepackage{tensor}
+\usepackage{siunitx}
+\usepackage[version=4]{mhchem}
+\usepackage{tikz}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{autobreak}
+\usepackage[ruled, vlined, linesnumbered]{algorithm2e}
+\usepackage{nameref,zref-xr}
+\zxrsetup{toltxlabel}
+\zexternaldocument*[optics-]{../optics/optics}[optics.pdf]
+\zexternaldocument*[solid-]{../solid/solid}[solid.pdf]
+\zexternaldocument*[qft-]{../relativistic-qft/relativistic-qft}[relativistic-qft.pdf]
+\usepackage[colorlinks,unicode]{hyperref} % , linkcolor=black, anchorcolor=black, citecolor=black, urlcolor=black, filecolor=black
+\usepackage[most]{tcolorbox}
+\usepackage{prettyref}
+
+% Page style
+\geometry{left=3.18cm,right=3.18cm,top=2.54cm,bottom=2.54cm}
+\titlespacing{\paragraph}{0pt}{1pt}{10pt}[20pt]
+\setlength{\droptitle}{-5em}
+\preauthor{\vspace{-10pt}\begin{center}}
+\postauthor{\par\end{center}}
+
+% More compact lists 
+\setlist[itemize]{
+    itemindent=17pt, 
+    leftmargin=1pt,
+    listparindent=\parindent,
+    parsep=0pt,
+}
+
+% Math operators
+\DeclareMathOperator{\timeorder}{\mathcal{T}}
+\DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\legpoly}{P}
+\DeclareMathOperator{\primevalue}{P}
+\DeclareMathOperator{\sgn}{sgn}
+\newcommand*{\ii}{\mathrm{i}}
+\newcommand*{\ee}{\mathrm{e}}
+\newcommand*{\const}{\mathrm{const}}
+\newcommand*{\suchthat}{\quad \text{s.t.} \quad}
+\newcommand*{\argmin}{\arg\min}
+\newcommand*{\argmax}{\arg\max}
+\newcommand*{\normalorder}[1]{: #1 :}
+\newcommand*{\pair}[1]{\langle #1 \rangle}
+\newcommand*{\fd}[1]{\mathcal{D} #1}
+\DeclareMathOperator{\bigO}{\mathcal{O}}
+
+% TikZ setting
+\usetikzlibrary{arrows,shapes,positioning}
+\usetikzlibrary{calc}
+\usetikzlibrary{arrows.meta}
+\usetikzlibrary{decorations.markings}
+\tikzstyle arrowstyle=[scale=1]
+\tikzstyle directed=[postaction={decorate,decoration={markings,
+    mark=at position .5 with {\arrow[arrowstyle]{stealth}}}}]
+\tikzstyle ray=[directed, thick]
+\tikzstyle dot=[anchor=base,fill,circle,inner sep=1pt]
+
+% Algorithm setting
+% Julia-style code
+\SetKwIF{If}{ElseIf}{Else}{if}{}{elseif}{else}{end}
+\SetKwFor{For}{for}{}{end}
+\SetKwFor{While}{while}{}{end}
+\SetKwProg{Function}{function}{}{end}
+\SetArgSty{textnormal}
+
+\newcommand*{\concept}[1]{{\textbf{#1}}}
+
+% Embedded codes
+\lstset{basicstyle=\ttfamily,
+  showstringspaces=false,
+  commentstyle=\color{gray},
+  keywordstyle=\color{blue}
+}
+
+% Reference formatting
+\newrefformat{fig}{Figure~\ref{#1} on page~\pageref{#1}}
+
+% Color boxes
+\tcbuselibrary{skins, breakable, theorems}
+\newtcbtheorem[number within=section]{warning}{Warning}%
+  {colback=orange!5,colframe=orange!65,fonttitle=\bfseries, breakable}{warn}
+\newtcbtheorem[number within=section]{note}{Note}%
+  {colback=green!5,colframe=green!65,fonttitle=\bfseries, breakable}{note}
+
+\newcommand{\ktnote}{\href{../topological-phases-reading-notes/kt.pdf}{this note}}
+
+\title{Lorentz Group and Its Representations}
+\author{Jinyuan Wu}
+
+\begin{document}
+
+\maketitle
+
+This article is mainly based on Prof. Dingyu Shao's lecture on relativistic QFT at Fudan University.
+It also summarize how these things can be found in different QFT textbooks.
+
+\section{The geometry of the Lorentz group}
+
+The \concept{Lorentz group} is defined to be the metric-keeping   
+
+TODO: Parity and time reversal
+Double covering
+
+\section{Generators of the Lorentz group}
+
+In Section~\ref{qft-sec:symmetry} in \href{../relativistic-qft/relativistic-qft.pdf}{this note}, we have 
+introduced spins with the approach in \emph{Physics from Symmetry}. Here we redo the work in a more swift 
+way in Peskin Section~3.1.
+
+We already know the angular momentum operators are  
+\begin{equation}
+    \vb*{J} = \vb*{x} \times \vb*{p} = - \ii \vb*{x} \times \grad,
+\end{equation}
+which form a pseudovector. According to differential geometry, we can use the Hodge star operator to map it 
+into a rank $3-2=2$ tensor, which is 
+\begin{equation}
+    \begin{aligned}
+        J^{ij} &= \epsilon^{ijk} J^k = - \ii \epsilon^{ijk} \epsilon^{lmk} x^l \partial^m \\
+        &= - \ii (\delta^{il} \delta^{jm} - \delta^{im} \delta^{jl}) x^l \partial^m \\
+        &= - \ii (x^i \partial^j - x^j \partial^i),
+    \end{aligned}
+    \label{eq:jij-def}
+\end{equation}
+from which we have 
+\[
+    \begin{aligned}
+        \epsilon^{lmi} J^{ij} &= \epsilon^{lmi} \epsilon^{ijk} J^k \\
+        &= (\delta^{lj} \delta^{mk} - \delta^{lk} \delta^{jm}) J^k \\
+        &= \delta^{lj} J^m - \delta^{jm} J^l,
+    \end{aligned}
+\]
+and therefore 
+\[
+    \epsilon^{lji} J^{ij} = \delta^{mj} (\delta^{lj} J^m - \delta^{jm} J^l) = J^l - J^l \delta^{jj} = - 2 J^l,
+\]
+so
+\begin{equation}
+    J^l = \frac{1}{2} \epsilon^{lij} J^{ij}.    
+\end{equation}
+
+We can try to extend the antisymmetric tensor \eqref{eq:jij-def} into a 4-antisymmetric tensor, which is 
+\begin{equation}
+    J^{\mu \nu} = \ii (x^\mu \partial^\nu - x^\nu \partial^\mu).
+    \label{eq:j-scalar-field}
+\end{equation}
+Note that $\partial^\mu = (\partial_t, - \grad)$. Now we find $J^{0 i}$ are just the boost generators.
+Therefore, $J^{\mu \nu}$ - an antisymmetric tensor with 6 independent components - gives all rotational and 
+boost generators of the Lorentz group. The $J^{0 i}$ components are boost generators, and the $J^{ij}$ 
+components are rotational generators. A general Lorentz transformation is 
+\begin{equation}
+    U = \ee^{- \frac{\ii}{2} \omega_{\mu \nu} J^{\mu \nu}},
+\end{equation}
+where $\omega_{\mu \nu}$ is an antisymmetric matrix.
+
+\eqref{eq:j-scalar-field} is actually the scalar field representation of the Lie algebra of the Lorentz group.
+We need to find the commutation rules from \eqref{eq:j-scalar-field}, to find more representations of the 
+Lorentz group. We have 
+\begin{equation}
+    \left[J^{\mu \nu}, J^{\rho \sigma}\right]=\ii \left(g^{\nu \rho} J^{\mu \sigma}-g^{\mu \rho} J^{\nu \sigma}-g^{\nu \sigma} J^{\mu \rho}+g^{\mu \sigma} J^{\nu \rho}\right).
+    \label{eq:lorentz-algebra}
+\end{equation}
+The derivation of this equation is just to expand the LHS and sort all terms according to the metric factor.
+
+The most frequently used representation is the representation on 4-vectors, which is 
+\begin{equation}
+    (\mathcal{J}^{\mu \nu})_{\alpha \beta} = \ii (\delta^{\mu}_\alpha \delta^{\nu}_\beta - \delta^\mu_\beta \delta^\nu_\alpha).
+    \label{eq:four-vec-lorentz}
+\end{equation}
+
+Since the Poincare group preserves the metrics, we can regard any transformation in the active perspective, i.e.
+the only change being 
+\begin{equation}
+    \psi(x) \longrightarrow \Lambda_{\psi} \psi(\Lambda^{-1} x), \quad \mathcal{L}(x) \longrightarrow \mathcal{L}(\Lambda^{-1}).
+\end{equation}
+Now we derive the Noether current of Lorentz generators. We have 
+\[
+    \var{\psi}^\mu = - \frac{\ii \var{\omega_{\rho \sigma}}}{2} (J^{\rho \sigma})\indices{^\mu_\nu} \psi^\nu
+    + \frac{\ii \var{\omega_{\rho \sigma}}}{2} (J^{\rho \sigma})\indices{^\nu_\delta} x^\delta \partial_\nu \psi^\mu,
+\]
+and since $\partial_\nu x^\delta = \delta^\delta_\nu$, and $J\indices{^\nu_\delta}$ is antisymmetric, we have
+\[
+    \var{\mathcal{L}} = \frac{\ii \var{\omega_{\rho \sigma}}}{2} (J^{\rho \sigma})\indices{^\nu_\delta} x^\delta \partial_\nu \mathcal{L} = \partial_\nu \underbrace{\left( \frac{\ii \var{\omega_{\rho \sigma}}}{2} (J^{\rho \sigma})\indices{^\nu_\delta} x^\delta  \mathcal{L} \right)}_{\mathcal{J}^\mu}.
+\]
+Therefore, the Noether current is 
+\[
+    \partial_\mu\left( \pdv{\mathcal{L}}{\partial_\mu \psi^\nu} \var{\psi^\nu} - \mathcal{J}^\mu \right) = 0.
+\]
+Expanding the expression, we find the following conservation current:
+\begin{equation}
+    (J^{\rho \sigma})^\mu = (L^{\rho \sigma})^\mu + (S^{\rho \sigma})^\mu, \quad \partial_\mu (J^{\rho \sigma})^\mu = 0,
+\end{equation}
+where 
+\begin{equation}
+    (L^{\rho \sigma})^\mu = (J^{\rho \sigma})\indices{^\alpha_\delta} x^\delta T\indices{^\mu_\alpha},
+\end{equation}
+and 
+\begin{equation}
+    (S^{\rho \sigma})^\mu = - \pdv{\mathcal{L}}{\partial_\mu \psi^\nu} (J^{\rho \sigma})\indices{^\nu_\delta} \psi^\delta.
+    \label{eq:spin-angular}
+\end{equation}
+
+\section{Dirac algebra}
+
+Consider we have a representation $S^{\mu \nu}$ of \eqref{eq:lorentz-algebra}. Note that if we assume 
+\begin{equation}
+    S^{\mu \nu} = \frac{\ii}{4} \comm*{\gamma^\mu}{\gamma^\nu},
+    \label{eq:j-gamma-def}
+\end{equation}
+where we have the \concept{Dirac algebra}
+\begin{equation}
+    \acomm*{\gamma^\mu}{\gamma^\nu} = 2 \eta^{\mu \nu}, 
+\end{equation}
+then \eqref{eq:lorentz-algebra} holds. The calculation is tedious. Here we list the main steps. First we have 
+\[
+    \begin{aligned}
+        \comm*{S^{\mu \nu}}{S^{\rho \sigma}} &= - \frac{1}{16} \comm*{\comm*{\gamma^\mu}{\gamma^\nu}}{\comm*{\gamma^\rho}{\gamma^\sigma}} \\
+        &= - \frac{1}{16} (\comm*{\comm*{\comm*{\gamma^\mu}{\gamma^\nu}}{\gamma^\rho}}{\gamma^\sigma} 
+        + \comm*{\comm*{\comm*{\gamma^\nu}{\gamma^\rho}}{\gamma^\sigma}}{\gamma^\mu} \\
+        &\quad \quad + \comm*{\comm*{\comm*{\gamma^\rho}{\gamma^\sigma}}{\gamma^\mu}}{\gamma^\nu} 
+        + \comm*{\comm*{\comm*{\gamma^\sigma}{\gamma^\mu}}{\gamma^\nu}}{\gamma^\rho}) \\
+        &= 
+    \end{aligned}
+\]
+We can then prove 
+\begin{equation}
+    \comm*{\gamma^\mu}{S^{\rho \sigma}} = (\mathcal{J}^{\rho \sigma}) \indices{^\mu_\nu} \gamma^\nu,
+\end{equation}
+and then by inserting \eqref{eq:j-gamma-def} 
+
+\begin{note*}{}{}
+    We have the following formulae:
+    \[
+        \begin{aligned}
+            &\{A,BC\}=\{A,B\}C-B[A,C], \\ 
+            &\{AB,C\}=A\{B,C\}-[A,C]B, \\ 
+            &[AB,C]=A\{B,C\}-\{A,C\}B, \\
+            &[[A,C],[B,D]]=[[[A,B],C],D]+[[[B,C],D],A]+[[[C,D],A],B]+[[[D,A],B],C].
+        \end{aligned}
+    \]
+\end{note*}
+
+\begin{equation}
+    S^{\rho \sigma} = \frac{\ii}{4} \comm*{\gamma^\rho}{\gamma^\sigma}.
+\end{equation}
+
+TODO: Can every representation be rewritten into the form of gamma matrices?
+
+\section{Dirac spinors}
+
+A possible of the Dirac algebra in the four-dimensional Minkowski space is
+\begin{equation}
+    \gamma^0 = \pmqty{0 & 1 \\ 1 & 0}, \quad \gamma^i = \pmqty{ 0 & \sigma^i \\ - \sigma^i & 0 },
+\end{equation}
+which is called the \concept{Weyl} or \concept{chiral} representation. This name comes from the fact that the 
+we can find $u(p)$ and $v(p)$ are eigenvectors of the \emph{helicity} operator 
+\begin{equation}
+    h \coloneqq \hat{\vb*{p}} \cdot \vb*{S} = \frac{1}{2} \hat{p}_i \pmqty{\dmat{\sigma^i, \sigma^i}}.
+\end{equation}
+A particle with $h = 1/2$ is called \concept{right-handed}, and a particle with $h = - 1/2$ is called 
+\concept{left handed}. Note that the notion of helicity is orthogonal to the notion of particle and antiparticle.
+In this representation, we have 
+\begin{equation}
+    S^{0 i} = - \frac{\ii}{2} \pmqty{\dmat{\sigma^i, - \sigma^i}}, \quad 
+    S^{ij} = \frac{1}{2} \epsilon^{ijk} \pmqty{\dmat{\sigma^k, \sigma^k}} \eqqcolon \frac{1}{2} \epsilon^{ijk} \Sigma^k.
+    \label{eq:weyl-lorentz}
+\end{equation}
+
+\section{Lorentz transformation on Dirac spinors}
+
+
+
+\end{document}

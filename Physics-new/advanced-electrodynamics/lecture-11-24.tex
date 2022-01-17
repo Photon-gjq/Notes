@@ -1,0 +1,384 @@
+\documentclass[hyperref, a4paper]{article}
+
+\usepackage{geometry}
+\usepackage{titling}
+\usepackage{titlesec}
+% No longer needed, since we will use enumitem package
+% \usepackage{paralist}
+\usepackage{enumitem}
+\usepackage{footnote}
+\usepackage{enumerate}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{mathtools}
+\usepackage{bbm}
+\usepackage{cite}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{physics}
+\usepackage{tensor}
+\usepackage{siunitx}
+\usepackage[version=4]{mhchem}
+\usepackage{tikz}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{autobreak}
+\usepackage[ruled, vlined, linesnumbered]{algorithm2e}
+\usepackage{nameref,zref-xr}
+\zxrsetup{toltxlabel}
+\zexternaldocument*[optics-]{../optics/optics}[optics.pdf]
+\zexternaldocument*[solid-]{../solid/solid}[solid.pdf]
+\usepackage[colorlinks,unicode]{hyperref} % , linkcolor=black, anchorcolor=black, citecolor=black, urlcolor=black, filecolor=black
+\usepackage[most]{tcolorbox}
+\usepackage{prettyref}
+
+% Page style
+\geometry{left=3.18cm,right=3.18cm,top=2.54cm,bottom=2.54cm}
+\titlespacing{\paragraph}{0pt}{1pt}{10pt}[20pt]
+\setlength{\droptitle}{-5em}
+\preauthor{\vspace{-10pt}\begin{center}}
+\postauthor{\par\end{center}}
+
+% More compact lists 
+\setlist[itemize]{
+    itemindent=17pt, 
+    leftmargin=1pt,
+    listparindent=\parindent,
+    parsep=0pt,
+}
+
+% Math operators
+\DeclareMathOperator{\timeorder}{\mathcal{T}}
+\DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\legpoly}{P}
+\DeclareMathOperator{\primevalue}{P}
+\DeclareMathOperator{\sgn}{sgn}
+\newcommand*{\ii}{\mathrm{i}}
+\newcommand*{\ee}{\mathrm{e}}
+\newcommand*{\const}{\mathrm{const}}
+\newcommand*{\suchthat}{\quad \text{s.t.} \quad}
+\newcommand*{\argmin}{\arg\min}
+\newcommand*{\argmax}{\arg\max}
+\newcommand*{\normalorder}[1]{: #1 :}
+\newcommand*{\pair}[1]{\langle #1 \rangle}
+\newcommand*{\fd}[1]{\mathcal{D} #1}
+\DeclareMathOperator{\bigO}{\mathcal{O}}
+
+% TikZ setting
+\usetikzlibrary{arrows,shapes,positioning}
+\usetikzlibrary{arrows.meta}
+\usetikzlibrary{decorations.markings}
+\tikzstyle arrowstyle=[scale=1]
+\tikzstyle directed=[postaction={decorate,decoration={markings,
+    mark=at position .5 with {\arrow[arrowstyle]{stealth}}}}]
+\tikzstyle ray=[directed, thick]
+\tikzstyle dot=[anchor=base,fill,circle,inner sep=1pt]
+
+% Algorithm setting
+% Julia-style code
+\SetKwIF{If}{ElseIf}{Else}{if}{}{elseif}{else}{end}
+\SetKwFor{For}{for}{}{end}
+\SetKwFor{While}{while}{}{end}
+\SetKwProg{Function}{function}{}{end}
+\SetArgSty{textnormal}
+
+\newcommand*{\concept}[1]{{\textbf{#1}}}
+
+% Embedded codes
+\lstset{basicstyle=\ttfamily,
+  showstringspaces=false,
+  commentstyle=\color{gray},
+  keywordstyle=\color{blue}
+}
+
+% Reference formatting
+\newrefformat{fig}{Figure~\ref{#1} on page~\pageref{#1}}
+
+% Color boxes
+\tcbuselibrary{skins, breakable, theorems}
+\newtcbtheorem[number within=section]{warning}{Warning}%
+  {colback=orange!5,colframe=orange!65,fonttitle=\bfseries, breakable}{warn}
+\newtcbtheorem[number within=section]{note}{Note}%
+  {colback=green!5,colframe=green!65,fonttitle=\bfseries, breakable}{note}
+\newtcbtheorem[number within=section]{info}{Info}%
+  {colback=blue!5,colframe=blue!65,fonttitle=\bfseries, breakable}{info}
+
+\title{Diffraction and Scattering in Electrodynamics by Prof. Kun Din}
+\author{Jinyuan Wu}
+\date{November 24, 2021}
+
+\begin{document}
+
+\maketitle
+
+In previous lectures we only discussed boundaries at infinity. The details of boundaries do not affect the 
+electromagnetic waves. Their role - if any - is to ``guide'' the electromagnetic waves, as is the case in 
+spherical optical cavities. 
+
+In this lecture we are going to discuss the physics of boundaries in electrodynamics.
+Suppose $\kappa$ to be the magnitude of the curvature of a boundary, which estimates its geometric details.
+When $\kappa \lambda \ll 1$, the boundary is almost flat in the eye of the light, and the theory on 
+what happens around the boundary is \emph{geometrical optics}. 
+On the other hand, when $\kappa \lambda \gg 1$, the details of the wave fronts of electromagnetic waves 
+are not clear in the eye of the boundary, and this case is called \concept{Rayleigh scattering}.
+Rayleigh scattering usually happens when small particles are placed in light, and what the particles 
+feel is almost a homogeneous variating potential. 
+
+Between the two limits are \concept{scattering} and \concept{diffraction}. Scattering is defined as the 
+phenomenon that the electrodynamic modes couple with inner modes of matter strongly, and the momenta of 
+both change significantly. Diffraction, on the other hand, means that light beams are split by the boundary, and
+there is no strong change on momentum, but the distribution in the momentum space changes (for example, if a
+plane wave is injected into a system, the direction of the output light beam is still the same, but the intensity
+now has spatial distribution, or in other words we can see a smooth distribution in the momentum space).
+
+\section{The general theory of scattering}
+
+\begin{figure}
+    \centering
+    \input{11-24-figures/system-scattering.tex}
+    \caption{Scattering system}
+    \label{fig:scattering}
+\end{figure}
+
+Consider a optical system is placed in vacuum, and we investigate its behavior when light is shed on it.
+Energy conservation gives 
+\begin{equation}
+    - \int \dd[3]{\vb*{r}} \div{\vb*{S}} - \pdv{u}{t} = \int \dd[3]{\vb*{r}} \vb*{j} \cdot \vb*{E},
+    \label{eq:energy-conservation-eq}
+\end{equation}
+where the volume contains the volume of the system.
+We make the decomposition 
+\begin{equation}
+    \vb*{E} = \vb*{E}_\text{in} + \vb*{E}_\text{sca}, \quad \vb*{H} = \vb*{H}_\text{in} + \vb*{H}_\text{sca},
+\end{equation}
+and from now on we work with monochromic light. 
+
+\begin{note*}{}{}
+    Working on monochromic light is equivalent to working on stationary states or eigenstates of an optical system.
+    There is no guarantee that in a real experimental setting, the input light persists long enough 
+    to make the system's state arbitrarily close to a stationary state.
+    Generally speaking, when a wave pocket is injected into an optical system, 
+    we will see two phenomena: 
+    \begin{itemize}
+        \item The wave pocket expands, because different frequency components in the wave pocket go through
+        the optical system with different speeds, so frequency components in the output state get staggered.
+        This can be called the temporal effects, though wave pocket expansion can also be observed in the space.
+        \item Since the input wave pocket has a finite spacial distribution, it has lots of wave vector
+        components, and each of them may be scattered in a slightly different way, so we may observe 
+        diffraction in the output wave pocket. This may be called the spacial effects. 
+    \end{itemize}
+    Generally, if the duration of a pulse is longer than 50 or 100 light periods, we can view the input 
+    pulse as an infinite one, and the output part of the stationary state accurately describe the output.
+    If the duration of the input pulse is shorter, or the optical system has very strong dispersion,
+    the scattering behavior changes dramatically.
+    For these cases - often dubbed as \concept{ultrafast pulses} - solving Maxwell equations in the time 
+    domain is much more convenient than solving the frequency domain equation.
+    Thus, time-dependent solution of Maxwell equations usually happens in investigation of ultrafast pulses.
+\end{note*}
+
+We consider a system illustrated in \prettyref{fig:scattering}. We choose a large surface $S$ to surround the 
+system. The surface $S$ must be large enough to ensure that it does not ``see'' the details of the scattering 
+system. We expand the Poynting vector as  
+\begin{equation}
+    \expval*{\vb*{S}} = \frac{1}{2} \Re \vb*{E} \times \vb*{H}^* 
+    = \frac{1}{2} \Re (\vb*{E}_\text{in} + \vb*{E}_\text{sca}) \times (\vb*{H}_\text{in}^* + \vb*{H}_\text{sca}^*),
+\end{equation}
+and we define 
+\begin{equation}
+    \expval*{\vb*{S}_\text{in}} = \frac{1}{2} \Re \vb*{E}_\text{in} \times \vb*{H}_\text{in}^*,
+\end{equation}
+\begin{equation}
+    \expval*{\vb*{S}_\text{sca}} = \frac{1}{2} \Re \vb*{E}_\text{sca} \times \vb*{H}_\text{sca}^*,
+\end{equation}
+and 
+\begin{equation}
+    \expval*{\vb*{S}_\text{ext}} = \frac{1}{2} \Re (\vb*{E}_\text{sca} \times \vb*{H}_\text{in}^* + \vb*{E}_\text{in} \times \vb*{H}_\text{sca}^*).
+\end{equation}
+The last term is called \concept{extinction}, because it depicts how scattering interrupts the energy flow of 
+the input light. We use $W$ to denote the power of energy flow $\vb*{S}$, i.e. the flux of the flow on a certain 
+surface.
+
+We often define 
+\begin{equation}
+    C = \frac{W}{I}
+\end{equation}
+as the \concept{cross section}. After evaluating the expectation value of \eqref{eq:energy-conservation-eq}, we have 
+\[
+    - \oint \dd{\vb*{S}} \cdot \expval*{\vb*{S}} = \int \dd[3]{\vb*{r}} \expval*{\vb*{j} \cdot \vb*{E}}.
+\]
+We find the RHS is just the rate of light absorption: We have 
+\[
+    \begin{aligned}
+        W_\text{abs} &= - \oint \dd{\vb*{S}} \cdot \expval*{\vb*{S}} \\
+        &= - \oint \dd{\vb*{S}} \cdot \expval*{(\vb*{S}_\text{in} + \vb*{S}_\text{sca} + \vb*{S}_\text{ext} )}.
+    \end{aligned}
+\]
+We know that in the scattering components energy is flowing outward, and therefore 
+\begin{equation}
+    W_\text{sca} = \oint \dd{\vb*{S}} \cdot \expval*{\vb*{S}_\text{sca}}.
+\end{equation}
+It is possible that the background medium is dissipative, and in this case we use 
+\begin{equation}
+    W_\text{in} = - \oint \dd{\vb*{S}} \cdot \expval*{\vb*{S}_\text{in}}
+\end{equation}
+to denote the energy dissipation in $S$ caused by the dissipative nature of the background medium. 
+The sign of the extinction term needs some thinking, but since it is the interference between two beams 
+of light, it is also outward, and therefore 
+\begin{equation}
+    W_\text{ext} = - \oint \dd{\vb*{S}} \cdot \expval*{\vb*{S}_\text{ext}}.
+\end{equation}
+Therefore, we have 
+\[
+    W_\text{abs} = W_\text{in} - W_\text{sca} + W_\text{ext},
+\]
+and therefore 
+\begin{equation}
+    C_\text{ext} + C_\text{in} = C_\text{sca} + C_\text{abs}.
+\end{equation}
+Usually there is no dissipation in the background material, and in this case we have 
+\begin{equation}
+    C_\text{ext} = C_\text{sca} + C_\text{abs},
+\end{equation}
+so the extinction cross section is also the \concept{total cross section}, including both scattering 
+and absorption effects. We can see from the above derivation that it is a natural result of energy conservation.
+
+In geometrical optics, the total cross section cannot be larger than the geometric
+cross section of the absorber, but when the wave nature of light is taken into account, the total cross 
+section can be larger - the diameter of the total cross section may be several wavelengths larger than the 
+geometric diameter. This is often quite hard in engineering. The scattering cross section, even in geometrical
+optics, can be as large as twice of the geometric cross section. Actually in geometrical optics, 
+the total cross section is always twice of the geometrical cross section. % ??? really
+
+When $\vb*{E}_\text{in}$ is a plane wave, the asymptotic behavior of $\vb*{E}$ as $\abs*{\vb*{r}} \to \infty$ is 
+\begin{equation}
+    \vb*{E} = E_0 \vu*{e}_0 \ee^{\ii \vb*{k}_0 \cdot \vb*{r}} + E_0 \frac{\ee^{\ii k r}}{r} \vb*{f}(\vb*{k}).
+\end{equation}
+Here we use $\vb*{k}$ to denote the direction of the scattered electromagnetic wave, which depends on $\vb*{r}$.
+We are sure that the spacial dependence is in the form of $\ee^{\ii k r} / r$ because when $\abs*{\vb*{r}} \to 0$
+the electromagnetic waves can be seen as spherical waves (the center of the sphere being the optical system where 
+scattering happens). Information about the optical system, i.e. the angular distribution of scattered 
+electromagnetic waves, the amplitude and the polarization is stored in $\vb*{f}(\vb*{k})$.
+
+Since outside the optical system there is no current, we have 
+\begin{equation}
+    \vb*{H} = \frac{\vu*{k} \times \vb*{E}}{Z_0}, \quad Z_0 = \sqrt{\frac{\mu}{\epsilon}}.
+\end{equation}
+Note that if the optical system in question is an array of smaller optical components, 
+then $Z_0$ \emph{cannot} be obtained from the photon band structure of the array 
+- we can only read the refractive index from the band structure. 
+We have to evaluate $E / H$ in that array to decide $Z_0$.
+Then we find that 
+\begin{equation}
+    \begin{aligned}
+        W_\text{ext} &= - \frac{1}{2} \oint \dd{S} \vu*{k} \cdot 
+            \Re (\vb*{E}_\text{in} \times (\vu*{k} \times \vb*{E}_\text{sca}^*) + \vb*{E}_\text{sca} \times (\vu*{k}_0 \times \vb*{E}_\text{in}^*)) \\
+        &= - \frac{E_0^2}{2 Z_0} \oint \frac{1}{r} \Re (
+        (\vu*{e}_0 \cdot \vb*{f}^* ) \ee^{\ii \vb*{k}_0 \cdot \vb*{r}} \ee^{- \ii k r} 
+        + (\vu*{e}^*_0 \cdot \vb*{f}) (\vu*{k}_0 \cdot \vu*{k}) \ee^{- \ii \vb*{k}_0 \cdot \vb*{r}} \ee^{\ii k r} \\
+        &\quad \quad  - (\vu*{k} \cdot \vu*{e}_0) (\vu*{k} \cdot \vb*{f}^*) \ee^{\ii \vb*{k}_0 \cdot \vb*{r}} \ee^{- \ii k r} 
+         - (\vu*{k} \cdot \vu*{e}_0^*) (\vu*{k}_0 \cdot \vb*{f}) \ee^{- \ii \vb*{k}_0 \cdot \vb*{r}} \ee^{\ii k r}  ) \dd{S}.
+    \end{aligned}
+    \label{eq:w-ext-step-1}
+\end{equation}
+Note that the factor $E_0^2 / (2 Z_0)$ is just the intensity of the input light, i.e. 
+\begin{equation}
+    I_\text{in} = \frac{1}{2} \epsilon_0 E_0^2 c = \frac{E_0^2}{2 Z_0},
+\end{equation}
+and $\dd{S}$ contains $r^2$ and a solid angle element $\dd{\Omega}$, so we can evaluate   
+\[
+    \int_{-\pi}^\pi \cos \theta \dd{\theta} \ee^{\pm \ii \cos \theta k r}
+\]
+factors in \eqref{eq:w-ext-step-1}. Note that \eqref{eq:w-ext-step-1} is only correct when we are 
+far from the optical system, so we just need to take the $kr \to \infty$ limit and use \eqref{eq:far-kr}.
+\begin{info*}{}
+    We have 
+    \[
+        \int_{-1}^1 \dd{\mu}  \ee^{\pm \ii k r \mu} g(\mu) 
+        = \int_{-1}^1 \dd \ee^{\pm \ii k r \mu} \frac{g(\mu)}{\pm \ii k r},
+    \]
+    and when $kr \to \infty$, since $\ee^{\ii k r \mu}$ vibrates much faster than $g(\mu)$, we have 
+    \[
+        \int_{-1}^1 \dd{\mu}  \ee^{\pm \ii k r \mu} g(\mu) \approx \int_{-1}^1 \dd\left(\ee^{\pm \ii k r \mu} \frac{g(\mu)}{\pm \ii k r}\right) = \frac{g(+1) \ee^{\pm \mathrm{i} k r}-g(-1) \ee^{\mp \mathrm{i} k r}}{\pm \mathrm{i} k r}.
+    \]
+    In the language of $\delta$-functions, we have 
+    \begin{equation}
+        \lim _{k_{0} r \rightarrow \infty} \ee^{\mathrm{i} \vb*{k}_{0} \cdot \vb*{r}}=\frac{2 \pi \mathrm{i}}{k_{0} r}\left\{\ee^{-\mathrm{i} k_{0} r} \delta\left(\hat{\vb*{r}}+\hat{\vb*{k}}_{0}\right)-\ee^{\mathrm{i} k_{0} r} \delta\left(\hat{\vb*{r}}-\hat{\vb*{k}}_{0}\right)\right\}.
+        \label{eq:far-kr}
+    \end{equation}
+\end{info*}
+\noindent Then we find that the last two terms in \eqref{eq:w-ext-step-1} vanish, because $\vb*{k}$ is 
+replaced by $\vb*{k}_0$, and the $\vu*{k} \cdot \vu*{e}_0$ factors just vanish. The rest terms are (here 
+we use $\mu$ to denote $\cos \theta$)
+\[
+    \begin{aligned}
+        W_\text{ext} &= - I_\text{in} \int \frac{r^2 \dd{\varphi} \dd{\mu}}{r} \Re ((\vu*{e}_0 \cdot \vb*{f}^*) \ee^{\ii \vb*{k}_0 \cdot \vb*{r}} \ee^{- \ii k r} + (\vu*{e}^*_0 \cdot \vb*{f}) (\vu*{k}_0 \cdot \vu*{k}) \ee^{- \ii \vb*{k}_0 \cdot \vb*{r}} \ee^{\ii k r}) \\
+        &= - I_\text{in} \int r \dd{\varphi} \Re \Biggl( \frac{\vu*{e}_0 \cdot \vb*{f}^*(\vb*{k}_0) \ee^{\ii k r} \ee^{- \ii k r}}{\ii k r} - \frac{\vu*{e}_0 \cdot \vb*{f}^*(- \vb*{k}_0) \ee^{- \ii k r} \ee^{- \ii k r}}{\ii k r} \\
+        & \quad \quad \quad + \frac{\vu*{e}_0^* \cdot \vb*{f}(\vb*{k}_0) (\vu*{k}_0 \cdot \vu*{k}_0) \ee^{- \ii k r} \ee^{\ii k r}}{- \ii k r} - \frac{\vu*{e}_0^* \cdot \vb*{f}(-\vb*{k}_0) (- \vu*{k}_0 \cdot \vu*{k}_0) \ee^{ \ii k r} \ee^{\ii k r}}{- \ii k r}  \Biggr) ,
+    \end{aligned}
+\]
+and it can be seen that there is no $\varphi$ dependence in the integral, so the integral over $\varphi$ just means $2\pi$. Moreover, we can see the second and the fourth term, after added up, is a pure imaginary number and therefore do not contribute to the final result. We therefore find 
+\[
+    \begin{aligned}
+        W_\text{ext} &= - I_\text{in} \cdot 2 \pi r \frac{2 \Im \vu*{e}_0 \cdot \vb*{f}^*(\vb*{k}_0)}{k r} \\
+        &= \frac{4 \pi }{k} I_\text{in} \Im \vu*{e}^*_0 \cdot \vb*{f}(\vb*{k}_0).
+    \end{aligned}
+\]
+The final result is 
+\begin{equation}
+    C_\text{ext} = \frac{W_\text{ext}}{I_\text{in}} = \frac{4 \pi}{k} \Im \vb*{e}_0^* \cdot \vb*{f}(\vb*{k}_0).
+    \label{eq:optical-theorem}
+\end{equation}
+This formula is called the \concept{optical theorem}. This is a result of energy conservation, or 
+more generally, a result of \emph{unitarity}. 
+\eqref{eq:optical-theorem} is actually a specific version of the optical theorem for plane waves, 
+and it breaks for a highly convergent light beam. The generalized version of the optical theorem 
+can be found in Born's famous textbook.
+
+Similar to \eqref{eq:w-ext-step-1}, we have 
+\[
+    \begin{aligned}
+        W_\text{sca} &= \frac{1}{2} \oint \dd{\vb*{S}} \cdot \vb*{E}_\text{sca} \times \vb*{H}_\text{sca} \\
+        &= \frac{1}{2 Z} \oint \dd{\vb*{S}} \cdot \vb*{E}_\text{sca} \times (\vu*{k} \vb*{E}^*_\text{sca}) \\
+        &= \frac{1}{2 Z} \oint \dd{S} \vu*{k} \cdot (\abs*{\vb*{E}_\text{sca}}^2 \vu*{k} - (\vu*{k} \cdot \vb*{E}_\text{sca}) \vb*{E}^*_\text{sca}).
+    \end{aligned}
+\]
+When $r$ is large, $\ee^{\ii k r}$ vibrates much faster than $\vb*{f}(\vb*{k}) / r$, and therefore the transverse field condition requires
+\[
+    0 = \div{\frac{\ee^{\ii k r}}{r} \vb*{f}(\vb*{k})} \approx \ii \vb*{k} \cdot \vb*{f}(\vb*{r}) \frac{\ee^{\ii k r}}{r},
+\]
+and therefore $\vu*{k} \cdot \vb*{E}_\text{sca} = 0$, so we have 
+\[
+    \begin{aligned}
+        W_\text{sca} &= \frac{1}{2Z} \oint \dd{S} \abs*{\vb*{E}_\text{sca}}^2 \\
+        &= \frac{1}{2Z} E_0^2 \int r^2 \dd{\Omega} \frac{\abs*{\vb*{f}(\vb*{k})}^2}{r^2} \\
+        &= I_\text{in} \int \dd{\Omega} \abs*{\vb*{f}(\vb*{k})}^2,
+    \end{aligned}
+\]
+and therefore 
+\begin{equation}
+    C_\text{sca} = \frac{1}{2 Z_0 I_\text{in}} \oint \dd{S} \vu*{k} \cdot \Re \vb*{E}_\text{sca} \times (\vu*{k} \times \vb*{E}_\text{sca}) = \int_{4\pi} \abs*{\vb*{f}(\vb*{k})}^2 \dd{\Omega}.
+\end{equation}
+Again we get something we are already familiar in quantum mechanics. 
+
+\section{Mie scattering}
+
+\begin{figure}
+    \centering
+    \input{11-24-figures/mie.tex}
+    \caption{Mie scattering}
+\end{figure}
+
+\concept{Mie scattering} is among few examples that can be solved exactly. It studies a sphere made of 
+dielectric. The scattered fields at infinity are expanded using spherical functions:
+\begin{equation}
+    \vb*{E}_\text{sca} = \sum_{n=1}^\infty E_n (\ii a_n \vb*{N}^{(3)}_{e1n} - b_n \vb*{M}^{(3)}_{o1n}), \quad 
+    \vb*{H}_\text{sca} = \frac{k}{\omega \mu} \sum_{n=1}^\infty E_n (\ii b_n \vb*{N}^{(3)}_{o1n} + a_n \vb*{M}^{(3)}_{e1n}),
+\end{equation}
+where the superscript $(3)$ means % TODO
+and the input light beam is described by 
+\begin{equation}
+    \vb*{E}_\text{in} = E_0 \sum_{n=1}^\infty \ii^n \frac{2n+1}{n(n+1)} (\vb*{M}^{(1)}_{o1n} - \vb*{N}^{(1)}_{e1n}),
+\end{equation}
+the proof of which can be found in \href{../advanced-electrodynsmics-homework/1.pdf}{this homework}.
+
+
+\end{document}

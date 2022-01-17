@@ -1,0 +1,442 @@
+\documentclass[hyperref, a4paper]{article}
+
+\usepackage{geometry}
+\usepackage{titling}
+\usepackage{titlesec}
+% No longer needed, since we will use enumitem package
+% \usepackage{paralist}
+\usepackage{enumitem}
+\usepackage{footnote}
+\usepackage{enumerate}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{mathtools}
+\usepackage{bbm}
+\usepackage{cite}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{physics}
+\usepackage{tensor}
+\usepackage{siunitx}
+\usepackage[version=4]{mhchem}
+\usepackage{tikz}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{autobreak}
+\usepackage[ruled, vlined, linesnumbered]{algorithm2e}
+\usepackage{nameref,zref-xr}
+\zxrsetup{toltxlabel}
+\zexternaldocument*[hw2-]{../2/2}[2.pdf]
+\usepackage[colorlinks,unicode]{hyperref} % , linkcolor=black, anchorcolor=black, citecolor=black, urlcolor=black, filecolor=black
+\usepackage[most]{tcolorbox}
+\usepackage{prettyref}
+
+% Page style
+\geometry{left=3.18cm,right=3.18cm,top=2.54cm,bottom=2.54cm}
+\titlespacing{\paragraph}{0pt}{1pt}{10pt}[20pt]
+\setlength{\droptitle}{-5em}
+\preauthor{\vspace{-10pt}\begin{center}}
+\postauthor{\par\end{center}}
+
+% More compact lists 
+\setlist[itemize]{
+    itemindent=17pt, 
+    leftmargin=1pt,
+    listparindent=\parindent,
+    parsep=0pt,
+}
+
+% Math operators
+\DeclareMathOperator{\timeorder}{\mathcal{T}}
+\DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\legpoly}{P}
+\DeclareMathOperator{\primevalue}{P}
+\DeclareMathOperator{\sgn}{sgn}
+\newcommand*{\ii}{\mathrm{i}}
+\newcommand*{\ee}{\mathrm{e}}
+\newcommand*{\const}{\mathrm{const}}
+\newcommand*{\suchthat}{\quad \text{s.t.} \quad}
+\newcommand*{\argmin}{\arg\min}
+\newcommand*{\argmax}{\arg\max}
+\newcommand*{\normalorder}[1]{: #1 :}
+\newcommand*{\pair}[1]{\langle #1 \rangle}
+\newcommand*{\fd}[1]{\mathcal{D} #1}
+\DeclareMathOperator{\bigO}{\mathcal{O}}
+
+% TikZ setting
+\usetikzlibrary{arrows,shapes,positioning}
+\usetikzlibrary{arrows.meta}
+\usetikzlibrary{decorations.markings}
+\tikzstyle arrowstyle=[scale=1]
+\tikzstyle directed=[postaction={decorate,decoration={markings,
+    mark=at position .5 with {\arrow[arrowstyle]{stealth}}}}]
+\tikzstyle ray=[directed, thick]
+\tikzstyle dot=[anchor=base,fill,circle,inner sep=1pt]
+
+% Algorithm setting
+% Julia-style code
+\SetKwIF{If}{ElseIf}{Else}{if}{}{elseif}{else}{end}
+\SetKwFor{For}{for}{}{end}
+\SetKwFor{While}{while}{}{end}
+\SetKwProg{Function}{function}{}{end}
+\SetArgSty{textnormal}
+
+\newcommand*{\concept}[1]{{\textbf{#1}}}
+
+% Embedded codes
+\lstset{basicstyle=\ttfamily,
+  showstringspaces=false,
+  commentstyle=\color{gray},
+  keywordstyle=\color{blue}
+}
+
+% Reference formatting
+\newrefformat{fig}{Figure~\ref{#1} on page~\pageref{#1}}
+
+% Color boxes
+\tcbuselibrary{skins, breakable, theorems}
+\newtcbtheorem[number within=section]{warning}{Warning}%
+  {colback=orange!5,colframe=orange!65,fonttitle=\bfseries, breakable}{warn}
+\newtcbtheorem[number within=section]{note}{Note}%
+  {colback=green!5,colframe=green!65,fonttitle=\bfseries, breakable}{note}
+\newtcbtheorem[number within=section]{info}{Info}%
+  {colback=blue!5,colframe=blue!65,fonttitle=\bfseries, breakable}{info}
+
+\newcommand{\hwtwo}{\href{../2/2.pdf}{Homework 2}}
+
+\title{QFT I, Homework 4}
+\author{Jinyuan Wu}
+
+\begin{document}
+
+\maketitle
+
+\paragraph{Scalar QED} Consider the theory of a complex scalar field $\phi$ interacting with the electromagnetic field $A^{\mu}$. The Lagrangian is
+\begin{equation}
+    \mathcal{L}=-\frac{1}{4} F_{\mu \nu} F^{\mu \nu}+\left(D_{\mu} \phi\right)^{*} D^{\mu} \phi-m^{2} \phi^{*} \phi.
+    \label{eq:scalar-qed}
+\end{equation}
+where $D_{\mu}=\partial_{\mu}+ \ii e A_{\mu}$ is the usual gauge covaraint derivative.
+\begin{itemize}
+    \item[(a)] Show the Lagrangian is invariant under the gauge transformations
+    \begin{equation}
+        \phi(x) \rightarrow \ee^{-\ii \alpha(x)} \phi(x), \quad A_{\mu}(x) \rightarrow A_{\mu}(x)+\frac{1}{e} \partial_{\mu} \alpha(x).
+        \label{eq:gauge}
+    \end{equation}
+    \item[(b)] Derive the Feynman rules for the interaction between photons and scalar particles.
+    \item[(c)] Draw all the leading-order Feynman diagrams and compute the amplitude for the process $\gamma \gamma \rightarrow \phi \phi^{*}$.
+    \item[(d)] Compute the differential cross section $\dd \sigma / \dd \cos \theta$. You can take an average over all initial state polarizations. For simplicity, you can restrict your calculation in the limit $m=0$.
+    \item[(e)] Draw all leading order Feynman diagrams, that contribute to the Compton scattering process $\gamma \phi \rightarrow \gamma \phi$ and compute the differential cross section $\dd \sigma / \dd \cos \theta$ with $m=0$.
+\end{itemize}
+
+\paragraph{Solution} \begin{itemize}
+\item[(a)] Under the gauge transformation \eqref{eq:gauge}, we have 
+\[
+    F_{\mu \nu}  \to 
+    F'_{\mu \nu} = \partial_\mu A'_\nu - \partial_\nu A'_\mu
+    = \partial_\mu \left(A_\nu + \frac{1}{e} \partial_\nu \alpha\right) 
+    - \partial_\nu \left(A_\mu + \frac{1}{e} \partial_\mu \alpha\right)
+    = \partial_\mu A_\nu - \partial_\nu A_\mu = F_{\mu \nu},
+\] 
+so the first term in \eqref{eq:scalar-qed} remains the same. It is obvious that under \eqref{eq:gauge}
+\[
+    \phi^* \phi \to \phi'^* \phi' = \ee^{\ii \alpha} \phi^* \ee^{- \ii \alpha} \phi = \phi^* \phi,
+\]
+so the third term in \eqref{eq:scalar-qed} is also invariant. Also we have
+\[
+    \begin{aligned}
+        D^\mu \phi \to (\partial^\mu + \ii e A'^\mu) \phi' 
+        &= (\partial^\mu + \ii e A^\mu + \ii \partial^\mu \alpha) \ee^{- \ii \alpha} \phi  \\
+        &= \ee^{- \ii \alpha} (\partial^\mu - \ii \partial^\mu \alpha 
+        + \ii e A^\mu + \ii \partial^\mu \alpha) \phi \\
+        &= \ee^{- \ii \alpha} D^\mu \phi,
+    \end{aligned}
+\]
+and also 
+\[
+    (D^\mu \phi)^* = \ee^{\ii \alpha} D^\mu \phi, 
+\]
+so $D^\mu \phi (D^\mu \phi)^*$ is also invariant. 
+Therefore \eqref{eq:scalar-qed} is invariant under \eqref{eq:gauge}.
+
+\item[(b)] We make the following expansion of Fourier transformation. For the complex scalar field we have 
+\begin{equation}
+    \phi(x) = \int \frac{\dd[3]{\vb*{p}}}{(2\pi)^3} \frac{1}{\sqrt{2 \omega_{\vb*{p}}}} (a_{\vb*{p}} \ee^{- \ii p \cdot x} + b^\dagger_{\vb*{p}} \ee^{\ii p \cdot x}).
+\end{equation}
+which was proved in \eqref{hw2-eq:complex-scalar-expansion} in \hwtwo. The vector field is expanded as 
+\begin{equation}
+    A_\mu(x) = \int \frac{\dd[3]{\vb*{p}}}{(2\pi)^3} \frac{1}{\sqrt{2 \omega_{\vb*{p}}}} \sum_{r=1}^2 \epsilon_\mu^r(\vb*{p}) \left({a}_{\vb*{p}, r}^\dagger \ee^{ \ii p \cdot x} + {a}_{\vb*{p}, r} \ee^{ - \ii p \cdot x} \right).
+\end{equation}
+
+Expanding \eqref{eq:gauge} we have 
+\begin{equation}
+    \mathcal{L} = \mathcal{L}_\text{scalar} + \mathcal{L}_\text{vector} + \mathcal{L}_\text{scalarQED},
+\end{equation} 
+where $\mathcal{L}_\text{scalar}$ and $\mathcal{L}_\text{vector}$ are Lagrangians of free scalar field and 
+free massless vector field, and 
+\begin{equation}
+    \begin{aligned}
+        \mathcal{L}_\text{scalarQED} &= (D_{\mu} \phi)^{*} D^{\mu} \phi - (\partial_\mu \phi)^* \partial^\mu \phi \\
+        &= e^2 \eta_{\mu \nu} A^\mu A^\nu \phi^* \phi - \ii e A_\mu \phi^* \partial^\mu \phi + \ii e \partial_\mu \phi^* A^\mu \phi .
+    \end{aligned}
+\end{equation}
+The first term has no derivatives. Therefore it gives the following (momentum space) vertex:
+\input{vertex-1.tex}
+where the factor $\ii$ comes from the time evolution operator and the factor $2$ comes from the fact that there 
+are two identical photon lines. The two $\phi$ lines can be any of the following four:
+\input{lines.tex}
+The second term gives
+\[
+    - \ii e A_\mu \phi^* \partial^\mu\phi \sim - \ii e A_{\mu} 
+    (a^\dagger_{\vb*{p}} \ee^{\ii p \cdot x} + b_{\vb*{p}} \ee^{- \ii p \cdot x}) 
+    (- \ii (p' \cdot x) a_{\vb*{p}'} \ee^{- \ii p' \cdot x} + \ii (p' \cdot x) b^\dagger_{\vb*{p}'} \ee^{\ii p' \cdot x}),
+\]
+and the third term is its complex conjugate. Therefore, the $a^\dagger a$ term in the Lagrangian is 
+\[
+    \sim - e(p_1 + p_2)_\mu A^\mu a^\dagger_{\vb*{p}_1} a_{\vb*{p}_2},
+\]
+so after adding the $\ii$ factor from the time evolution operator we have  
+\input{vertex-2.tex}
+and we can change the direction of a momentum line and a $\phi$-particle line arbitrarily; if a momentum line 
+goes in contrast to the corresponding particle line, then we need to add a minus sign to the corresponding 
+momentum. For example we have
+\input{vertex-3.tex}
+There are four vertices in this type in total.
+
+\begin{note*}{}{}
+    Here we follow the notation of Peskin, i.e. using the \emph{momentum} arrow to denote whether this line
+    represents creation or annihilation and using the arrow \emph{on} a particle line to show whether this line 
+    represents a particle (if the direction of the particle line is parallel to the direction of the momentum line)
+    or a antiparticle (otherwise). The real direction of a 4-momentum is \emph{not} represented in any arrow.
+\end{note*} 
+
+\item[(c)] We enumerate over all possible diagrams. The vertex \eqref{eq:vertex-1} itself is a diagram:
+\input{diagram-gg-1.tex} 
+Combining two \eqref{eq:vertex-2}-type vertices we have a $t$-channel
+\input{diagram-gg-3.tex}
+and a $u$-channel
+\input{diagram-gg-2.tex}
+
+\begin{note*}{}{}
+    We \emph{do not} need to distinguish the direction of the $q'$ momentum line. This line can be either 
+    a particle line or an antiparticle line, but since the ordinary propagator $\ii / (p^2 - m^2 + \ii 0^+)$ 
+    is obtained by summing up the two cases, when we write down this propagator, we have automatically 
+    considered both processes. 
+\end{note*}
+
+Summing everything up, we have 
+\begin{equation}
+    \begin{aligned}
+        \ii \mathcal{M}(\gamma \gamma \to \phi \phi^*) &= \ii (\mathcal{M}_4 + \mathcal{M}_t + \mathcal{M}_u) \\
+        &= \ii e^2 (\epsilon^\sigma)^\mu (\epsilon^{\sigma'})^\nu \left( 2 \eta_{\mu \nu} + \frac{(k-2p)_\mu (k'-2q)_\nu}{t - m^2} + \frac{(k-2q)_\mu (k'-2p)_\nu}{u - m^2} \right) \\
+        &\eqqcolon \ii (\epsilon^\sigma)^\mu (\epsilon^{\sigma'})^\nu e^2 \mathcal{M}_{\mu \nu} ,
+    \end{aligned}
+    \label{eq:m-mu-nu-def-gamma-gamma}
+\end{equation}
+where 
+\begin{equation}
+    t = (k-p)^2, \quad u = (q-k)^2.
+\end{equation}
+
+\item[(d)] We work in the center-of-mass frame, and therefore we have $k = (\abs*{\vb*{k}}, \vb*{k})$, 
+and $k' = (\abs*{\vb*{k}}, - \vb*{k})$. 
+The massless limit can be calculated with Eq.~(4.85) in Peskin, which is 
+\begin{equation}
+    \left(\dv{\sigma}{\Omega}\right)_\text{CM} = \sum_\text{spins} \frac{\abs*{\mathcal{M}}^2}{64 \pi^2 E_\text{CM}^2},
+\end{equation} 
+What we need is $\abs*{\mathcal{M}}^2$. We have 
+\[
+    \begin{aligned}
+        \sum_\text{spins} \abs*{\mathcal{M}}^2 &= e^4 \sum_{\epsilon^\sigma, \epsilon^{\sigma'}} P(\epsilon^\sigma, \epsilon^{\sigma'})
+        (\epsilon^\sigma)^\mu (\epsilon^{\sigma'})^\nu (\epsilon^\sigma)^{\rho *} (\epsilon^{\sigma'})^{\delta *} 
+        \mathcal{M}_{\mu \nu} \mathcal{M}_{\rho \delta}^* \\
+        &= e^4 \sum_{\sigma= \pm 1}  (\epsilon^\sigma)^\mu (\epsilon^\sigma)^{\rho *}
+        \sum_{\sigma' = \pm 1} (\epsilon^{\sigma'})^\nu (\epsilon^{\sigma'})^{\delta *}
+        \mathcal{M}_{\mu \nu} \mathcal{M}_{\rho \delta}^* . % TODO: the 1/4 factor
+    \end{aligned}
+\]
+Using Ward identity (see Eq.~(5.75) and relevant discussion about it in Peskin) we have
+\[
+    \begin{aligned}
+        \sum_{\sigma= \pm 1}  (\epsilon^\sigma)^\mu (\epsilon^\sigma)^{\rho *}
+        \sum_{\sigma' = \pm 1} (\epsilon^{\sigma'})^\nu (\epsilon^{\sigma'})^{\delta *}
+        \mathcal{M}_{\mu \nu} \mathcal{M}_{\rho \delta}^*
+        &= (- g^{\mu \rho}) (- g^{\nu \delta}) \mathcal{M}_{\mu \nu} \mathcal{M}_{\rho \delta}^* \\
+        &= \mathcal{M}_{\mu \nu} (\mathcal{M}^{\mu \nu})^*.
+    \end{aligned}
+\] 
+Substitute \eqref{eq:m-mu-nu-def-gamma-gamma} into the above equation, we have 
+\[
+    \begin{aligned}
+        \mathcal{M}_{\mu \nu} (\mathcal{M}^{\mu \nu})^* 
+        &= 4 \eta_{\mu \nu} \eta^{\mu \nu} + \frac{4 (k-2p) \cdot (k'-2q)}{t} + \frac{4 (k-2q) \cdot (k'-2p)}{u} \\
+        &\quad + 2 \frac{(k-2q) \cdot (k-2p) (k'-2p) \cdot (k'-2q)}{ut} \\ 
+        &\quad + \frac{(k-2q)^2 (k'-2p)^2}{u^2} + \frac{(k-2p)^2 (k'-2q)^2}{t^2}.
+    \end{aligned}
+\]
+The equation above has been simplified using the fact that $k^2 = k'^2 = p^2 = q^2 = 0$ and 
+\begin{equation}
+    \begin{aligned}
+        t &= (k-p)^2 = -2 k \cdot p = -2 k' \cdot q, \\
+        u &= (q-k)^2 = - 2 q \cdot k = - 2 p \cdot k', \\
+        s &= (k+k')^2 = 2 k \cdot k' = 2 p \cdot q,
+    \end{aligned}
+\end{equation}
+and we can evaluate terms in $\mathcal{M}_{\mu \nu} (\mathcal{M}^{\mu \nu})^*$. We have  
+\[
+    4 \eta_{\mu \nu} \eta^{\mu \nu} = 16,
+\]
+and
+\[
+    \begin{aligned}
+        \frac{4 (k-2p) \cdot (k'-2q)}{t} &= \frac{4 (k \cdot k' - 2 p \cdot k' - 2 k \cdot q + 4 p \cdot q)}{t} \\
+        &= \frac{4 (-s/2 + 4 \times (-s/2) + u + u)}{t} = - \frac{10 s}{t} + \frac{8 u}{t},
+    \end{aligned}
+\]
+and similarly 
+\[
+    \frac{4 (k-2q) \cdot (k'-2p)}{u} = - \frac{10 s}{u} + \frac{8t}{u}.
+\]
+The fourth term is 
+\[
+    \begin{aligned}
+        &\quad 2 \frac{(k-2q) \cdot (k-2p) (k'-2p) \cdot (k'-2q)}{ut} \\
+        &= 2 \frac{ (-2 (p+q) \cdot k + 4 p \cdot q) (-2 (p+q) \cdot k' + 4 p \cdot q) }{(-2 q\cdot k) (-2 k \cdot p)} \\
+        &= 2 \frac{ (-2 (k+k') \cdot k + 4 p \cdot q) (-2 (k+k') \cdot k' + 4 p \cdot q) }{(-2 q\cdot k) (-2 k \cdot p)} \\
+        &= 2 \frac{(- 2 k \cdot k' + 4 p \cdot q)^2}{4 (q \cdot k) (p \cdot k)} \\
+        &= \frac{2 s^2}{ut}.
+    \end{aligned}
+\]
+The fifth term is 
+\[
+    4 \frac{(k-2q)^2 (k'-2p)^2}{u^2} =  4\frac{(- 2 k \cdot q) (-2 k' \cdot p)}{u^2} = 4,
+\]
+and so does the sixth term. So summing everything up, we have 
+\[
+    \mathcal{M}_{\mu \nu} (\mathcal{M}^{\mu \nu})^* = 24 + \frac{2s^2}{ut} + \frac{8u}{t} + \frac{8t}{u} + \frac{10 s}{ut} (t + u).
+\]
+In the massless case we have 
+\begin{equation}
+    s + t + u = 0,
+\end{equation}
+and therefore 
+\[
+    \begin{aligned}
+        \mathcal{M}_{\mu \nu} (\mathcal{M}^{\mu \nu})^* &= 24 + \frac{2s^2}{ut} + \frac{8u}{t} + \frac{8t}{u} + \frac{10 s}{ut} (-s) \\
+        &= 24 - \frac{8 s^2}{ut} + \frac{8 (u^2 + t^2)}{ut} \\
+        &= 24 - \frac{8 (u+t)^2}{ut} + \frac{8 (u^2 + t^2)}{ut} \\
+        &= 24 - 16 = 8,
+    \end{aligned}
+\]
+so we have 
+\begin{equation}
+    \sum_\text{spins} \abs*{\mathcal{M}}^2 = 8 e^4.
+\end{equation}
+Also, note that 
+\[
+    E_\text{CM} = 2 \abs*{\vb*{k}}, \quad E_\text{CM}^2 = 4 \abs*{\vb*{k}}^2 = 2 k \cdot k' = s,
+\]
+and therefore 
+\begin{equation}
+    \dv{\sigma}{\Omega} = \frac{1}{64\pi^2} \times 8 e^4 \times \frac{1}{s} = \frac{e^4}{8 \pi^2 s},
+\end{equation}
+so we have 
+\begin{equation}
+    \dv{\sigma}{\cos \theta} = 2 \pi \times \frac{e^4}{8 \pi^2 s} = \frac{e^4}{4 \pi s}.
+\end{equation}
+
+% \input{full-process.tex}
+
+\item[(e)] We enumerate $\gamma \phi \to \gamma \phi$ diagrams. We have 
+\input{diagram-comp-1.tex}
+\input{diagram-comp-2.tex}
+and 
+\input{diagram-comp-3.tex}
+Summing everything up and take the $m \to 0$ limit, and we have 
+\begin{equation}
+    \begin{aligned}
+        \ii \mathcal{M}& = \ii e^2 (\epsilon^\sigma)^\mu (\epsilon^{\sigma'})^\nu \Big( 2 \eta_{\mu \nu} - (k-2q)_\mu (k'-2p)_\nu \frac{1}{(q-k)^2  }  - (2p+k)_\mu (2q+k')_\nu \frac{1}{(k+p)^2  }  \Big) \\
+        &\eqqcolon \ii e^2 (\epsilon^\sigma)^\mu (\epsilon^{\sigma'})^\nu \mathcal{M}_{\mu \nu}.
+    \end{aligned}
+\end{equation}
+Now we can repeat the process in (d). We define 
+\begin{equation}
+    \begin{aligned}
+        s &= (k+p)^2 = 2 k \cdot p = 2 k' \cdot q, \\
+        t &= (k - k')^2 = - 2 k \cdot k' = - 2 p \cdot q, \\
+        u &= (k - q)^2 = - 2 k \cdot q = - 2 k' \cdot p,
+    \end{aligned}
+\end{equation}
+and again we have 
+\[
+    \begin{aligned}
+        \sum_\text{spins} \abs*{\mathcal{M}}^2 &= 
+        e^4 \sum_\text{spins} (\epsilon^\sigma)^\mu (\epsilon^{\sigma'})^\nu \mathcal{M}_{\mu \nu}
+        (\epsilon^\sigma)^\rho (\epsilon^{\sigma'})^\delta (\mathcal{M}_{\rho \delta})^* \\
+        &= e^4 (- g^{\mu \rho}) (- g^{\nu \delta}) \mathcal{M}_{\mu \nu} (\mathcal{M}_{\rho \delta})^* \\
+        &= e^4 \mathcal{M}_{\mu \nu} (\mathcal{M}^{\mu \nu})^*,
+    \end{aligned}
+\]
+where 
+\[
+    \begin{aligned}
+        \mathcal{M}_{\mu \nu} (\mathcal{M}^{\mu \nu})^* &= 16 + \frac{(k-2q)^2 (k'-2p)^2}{(q-k)^4} 
+        + \frac{(k+2p)^2 (k'+2q)^2}{(k+p)^4} - 4 \frac{(k-2q) \cdot (k'-2p)}{(q-k)^2} \\
+        &\quad - 4 \frac{(k+2p) \cdot (k'+2q)}{(k+p)^2} + 2 \frac{(k-2q) \cdot (k+2p) (k'-2p) \cdot (k'+2q)}{(k+p)^2 (k-q)^2} .
+    \end{aligned}
+\]
+We have 
+\[
+    \frac{(k-2q)^2 (k'-2p)^2}{(q-k)^4} = \frac{(-4 k \cdot q) (-4 k' \cdot p)}{(-2 q \cdot k)^2 } = \frac{(-4 k \cdot q) (-4 k \cdot q)}{(-2 q \cdot k)^2 } = 4.
+\]
+and the third term also evaluates to $4$. The fourth term is 
+\[
+    \begin{aligned}
+        - 4 \frac{(k-2q) \cdot (k'-2p)}{(q-k)^2} &= -4 
+        \frac{k \cdot k' + 4 q \cdot p - 2 p \cdot k - 2 q \cdot k'}{- 2 q \cdot k} \\
+        &= \frac{10 t + 8 s}{u},
+    \end{aligned}
+\]
+and similarly the fifth term is 
+\[
+    - 4 \frac{(k+2p) \cdot (k'+2q)}{(k+p)^2} = \frac{10 t + 8u}{s}.
+\]
+The last term is 
+\[
+    \begin{aligned}
+        2 \frac{(k-2q) \cdot (k+2p) (k'-2p) \cdot (k'+2q)}{(k+p)^2 (k-q)^2} &= 
+        2 \frac{(2 (p-q) \cdot k - 4 p \cdot q) (- 2 (p-q) \cdot k' - 4 p \cdot q)}{su} \\
+        &= 2 \frac{(2 (k'-k) \cdot k - 4 p \cdot q) (- 2 (k'-k) \cdot k' - 4 p \cdot q)}{su} \\
+        &= 2 \frac{(2 k \cdot k - 4 p \cdot q)^2}{su} \\
+        &= 2 \frac{t^2}{su}.
+    \end{aligned}
+\]
+Putting everything together, we have 
+\[
+    \begin{aligned}
+        \mathcal{M}_{\mu \nu} (\mathcal{M}^{\mu \nu})^* &= 24 + \frac{2 t^2}{su} + \frac{10 t + 8 s}{u} + \frac{10 t + 8u}{s} \\
+        &= 24 + \frac{2 t^2}{su} + 8 \frac{s^2 + u^2}{su} + \frac{10 t (u + s)}{su} \\
+        &= 24 + \frac{2 t^2}{su} + 8 \frac{s^2 + u^2}{su} - \frac{10 t^2}{su} \\
+        &= 24 + 8 \frac{s^2 + u^2}{su} - \frac{8 (s+u)^2}{su} \\
+        &= 24 - 16 = 8,
+    \end{aligned}
+\]
+so we have 
+\begin{equation}
+    \sum_\text{spins} \abs*{\mathcal{M}}^2 = 8 e^4.
+\end{equation}
+We also have 
+\[
+    E_\text{CM} = 2 \abs*{\vb*{k}}, \quad E_\text{CM} = 4 \abs*{\vb*{k}}^2 = s,
+\]
+so again we have 
+\begin{equation}
+    \dv{\sigma}{\Omega} = \frac{1}{64\pi^2} \times 8 e^4 \times \frac{1}{s} = \frac{e^4}{8 \pi^2 s},
+\end{equation}
+so we have 
+\begin{equation}
+    \dv{\sigma}{\cos \theta} = 2 \pi \times \frac{e^4}{8 \pi^2 s} = \frac{e^4}{4 \pi s}.
+\end{equation}
+
+\end{itemize}
+
+\end{document}
